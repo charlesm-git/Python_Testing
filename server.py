@@ -79,11 +79,11 @@ def create_app(config=None):
 
     @app.route("/book/<competition>/<club>")
     def book(competition, club):
-        foundClub = [c for c in app.clubs if c["name"] == club][0]
-        foundCompetition = [
-            c for c in app.competitions if c["name"] == competition
-        ][0]
-        if foundClub and foundCompetition:
+        foundClub = next((c for c in app.clubs if c["name"] == club), None)
+        foundCompetition = next(
+            (c for c in app.competitions if c["name"] == competition), None
+        )
+        if foundClub is not None and foundCompetition is not None:
             return render_template(
                 "booking.html", club=foundClub, competition=foundCompetition
             )
