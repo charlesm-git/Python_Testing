@@ -33,8 +33,21 @@ def create_app(config=None):
 
     @app.route('/showSummary',methods=['POST'])
     def showSummary():
-        club = [club for club in app.clubs if club['email'] == request.form['email']][0]
-        return render_template('welcome.html',club=club,competitions=app.competitions)
+        club = next(
+            (
+                club
+                for club in app.clubs
+                if club["email"] == request.form["email"]
+            ),
+            None,
+        )
+        if club is not None:
+            return render_template(
+                "welcome.html", club=club, competitions=app.competitions
+            )
+        else:
+            message = "This email was not found in the database"
+            return render_template("index.html", message=message)
 
     @app.route('/book/<competition>/<club>')
     def book(competition,club):
