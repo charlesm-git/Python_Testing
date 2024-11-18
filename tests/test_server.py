@@ -7,7 +7,7 @@ class TestServer:
     def test_index_page_status_code(self, client):
         response = client.get("/")
         assert response.status_code == 200
-        
+
     def test_points_page_status_code(self, client):
         response = client.get("/points")
         assert response.status_code == 200
@@ -25,7 +25,7 @@ class TestServer:
         )
         assert response.status_code == 200
         assert b"This email was not found in the database" in response.data
-        
+
     def test_app_should_load_competitions_when_started(self, app):
         expected_value = [
             {
@@ -203,3 +203,11 @@ class TestServer:
         ]
         app.competitions = loadClubs(app.config["CLUBS_DB_PATH"])
         assert app.competitions == expected_value
+
+    def test_booking_wrong_competition_error(self, client):
+        response = client.get("/book/wrong-competition/test_club_20_points")
+        assert b"Something went wrong-please try again" in response.data
+
+    def test_booking_wrong_club_error(self, client):
+        response = client.get("/book/test_competition_20_places/wrong-club")
+        assert b"Something went wrong-please try again" in response.data
