@@ -1,0 +1,41 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Points || GUDLFT</title>
+</head>
+
+<body>
+    <h2>Points page</h2>
+    <p>On this page, you can check the points acquired by each club</p>
+    <table>
+        <thead>
+            <th>Club</th>
+            <th>Points available</th>
+        </thead>
+        <tbody>
+            {% for club in clubs %}
+            <tr>
+                <td>{{ club["name"] }}</td>
+                <td>{{ club["points"] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('index') }}">Return to connexion page</a>
+</body>
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 75%;
+    }
+
+    th,
+    td {
+        border: 1px solid black;
+        padding: 0.5em;
+        text-align: center;
+    }
+</style>

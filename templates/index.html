@@ -14,9 +14,12 @@
         <input type="email" name="email" id="" />
         <button type="submit">Enter</button>
     </form>
+
     {% if message %}
     <p>{{message}}</p>
     {% endif %}
+    
+    <a href="{{ url_for('points') }}">Check the points table</a>
 </body>
 
 </html>
