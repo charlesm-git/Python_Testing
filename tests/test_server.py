@@ -19,3 +19,98 @@ class TestServer:
         )
         assert response.status_code == 200
         assert b"This email was not found in the database" in response.data
+
+    @pytest.mark.parametrize("input_value", [1, 5, 10, 12])
+    def test_can_book_places(self, client, input_value):
+        response = client.post(
+            "/purchasePlaces",
+            data=dict(
+                competition="test_competition_20_places",
+                club="test_club_20_points",
+                places=input_value,
+            ),
+            follow_redirects=True,
+        )
+        assert b"Great-booking complete!" in response.data
+
+    @pytest.mark.parametrize("input_value", [9, 12])
+    def test_cant_book_if_not_enough_places_in_competition(
+        self, client, input_value
+    ):
+        response = client.post(
+            "/purchasePlaces",
+            data=dict(
+                competition="test_competition_8_places",
+                club="test_club_20_points",
+                places=input_value,
+            ),
+            follow_redirects=True,
+        )
+        assert (
+            b"You are booking more places than the number of places available "
+            b"for this competition" in response.data
+        )
+
+    @pytest.mark.parametrize("input_value", [6, 10])
+    def test_cant_book_if_not_enough_points(self, client, input_value):
+        response = client.post(
+            "/purchasePlaces",
+            data=dict(
+                competition="test_competition_20_places",
+                club="test_club_5_points",
+                places=input_value,
+            ),
+            follow_redirects=True,
+        )
+        assert (
+            b"You don&#39;t have enough points to book that many places"
+            in response.data
+        )
+
+    @pytest.mark.parametrize("input_value", [13, 20])
+    def test_cant_book_more_than_12_places_single_booking(
+        self, client, input_value
+    ):
+        response = client.post(
+            "/purchasePlaces",
+            data=dict(
+                competition="test_competition_20_places",
+                club="test_club_20_points",
+                places=input_value,
+            ),
+            follow_redirects=True,
+        )
+        assert (
+            b"You can&#39;t purchase more than 12 places per club for a "
+            b"competition" in response.data
+        )
+
+    @pytest.mark.parametrize("input_value_second_booking", [3, 6, 10])
+    def test_cant_book_more_than_12_places_multiple_booking(
+        self, client, input_value_second_booking
+    ):
+        # client.post("/showSummary", data=dict(email="test5@test.co"))
+        # First books 10 places
+        client.post(
+            "/purchasePlaces",
+            data=dict(
+                competition="test_competition_20_places",
+                club="test_club_20_points",
+                places=10,
+            ),
+            follow_redirects=True,
+        )
+        # Books 10 places again and check that it is not possible
+        response = client.post(
+            "/purchasePlaces",
+            data=dict(
+                competition="test_competition_20_places",
+                club="test_club_20_points",
+                places=input_value_second_booking,
+            ),
+            follow_redirects=True,
+        )
+        assert (
+            b"You can&#39;t purchase more than 12 places per club for a "
+            b"competition" in response.data
+        )
