@@ -205,11 +205,9 @@ class TestServer:
         assert app.competitions == expected_value
 
     def test_booking_wrong_competition_error(self, client):
-        # client.post("/showSummary", data=dict(email="test20@test.co"))
         response = client.get("/book/wrong-competition/test_club_20_points")
         assert b"Something went wrong-please try again" in response.data
 
     def test_booking_wrong_club_error(self, client):
-        # client.post("/showSummary", data=dict(email="test20@test.co"))
         response = client.get("/book/test_competition_20_places/wrong-club")
         assert b"Something went wrong-please try again" in response.data
