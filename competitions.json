@@ -1,16 +1,22 @@
 {
     "competitions": [
         {
+            "name": "Winter Cup",
+            "date": "2024-02-15 11:00:00",
+            "numberOfPlaces": 20
+        },
+        {
             "name": "Spring Festival",
-            "date": "2020-03-27 10:00:00",
-            "numberOfPlaces": 21,
+            "date": "2025-03-27 10:00:00",
+            "numberOfPlaces": 19,
             "participants": {
-                "She Lifts": 4
+                "She Lifts": 4,
+                "SheLifts": 2
             }
         },
         {
             "name": "Fall Classic",
-            "date": "2020-10-22 13:30:00",
+            "date": "2025-10-22 13:30:00",
             "numberOfPlaces": 13
         }
     ]

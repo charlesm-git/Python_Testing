@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, flash, url_for
 
 
@@ -70,8 +71,12 @@ def create_app(config=None):
             None,
         )
         if club is not None:
+            current_time = str(datetime.now())
             return render_template(
-                "welcome.html", club=club, competitions=app.competitions
+                "welcome.html",
+                club=club,
+                competitions=app.competitions,
+                current_time=current_time,
             )
         else:
             message = "This email was not found in the database"
@@ -83,15 +88,34 @@ def create_app(config=None):
         foundCompetition = next(
             (c for c in app.competitions if c["name"] == competition), None
         )
-        if foundClub is not None and foundCompetition is not None:
+        # Render the welcome page if the club or the competition in the url is
+        # wrong
+        if foundClub is None or foundCompetition is None:
+            flash("Something went wrong-please try again")
+            current_time = str(datetime.now())
+            return render_template(
+                "welcome.html",
+                club=foundClub,
+                competitions=app.competitions,
+                current_time=current_time,
+            )
+        # Render an error message if the user is trying to book place for a 
+        # past competition.
+        if foundCompetition["date"] <= str(datetime.now()):
+            flash("Booking on a past competition is not allowed")
+            current_time = str(datetime.now())
+            return render_template(
+                "welcome.html",
+                club=foundClub,
+                competitions=app.competitions,
+                current_time=current_time,
+            )
+        # If everything is ok, render the booking page.
+        else:
             return render_template(
                 "booking.html", club=foundClub, competition=foundCompetition
             )
-        else:
-            flash("Something went wrong-please try again")
-            return render_template(
-                "welcome.html", club=club, competitions=app.competitions
-            )
+
 
     @app.route("/purchasePlaces", methods=["POST"])
     def purchasePlaces():
@@ -167,8 +191,12 @@ def create_app(config=None):
             updateClubsFile(app.config["CLUBS_DB_PATH"], app.clubs, club)
 
             flash("Great-booking complete!")
+            current_time = str(datetime.now())
             return render_template(
-                "welcome.html", club=club, competitions=app.competitions
+                "welcome.html",
+                club=club,
+                competitions=app.competitions,
+                current_time=current_time,
             )
         else:
             return redirect(

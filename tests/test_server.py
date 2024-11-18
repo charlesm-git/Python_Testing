@@ -29,13 +29,18 @@ class TestServer:
     def test_app_should_load_competitions_when_started(self, app):
         expected_value = [
             {
+                "name": "test_old_competition",
+                "date": "2000-01-01 10:00:00",
+                "numberOfPlaces": 20,
+            },
+            {
                 "name": "test_competition_20_places",
-                "date": "2024-01-01 10:00:00",
+                "date": "2100-01-01 10:00:00",
                 "numberOfPlaces": 20,
             },
             {
                 "name": "test_competition_8_places",
-                "date": "2024-01-01 10:00:00",
+                "date": "2100-01-01 10:00:00",
                 "numberOfPlaces": 8,
             },
         ]
@@ -125,7 +130,6 @@ class TestServer:
     def test_cant_book_more_than_12_places_multiple_booking(
         self, client, input_value_second_booking
     ):
-        # client.post("/showSummary", data=dict(email="test5@test.co"))
         # First books 10 places
         client.post(
             "/purchasePlaces",
@@ -152,7 +156,6 @@ class TestServer:
         )
 
     def test_competitions_database_updates_after_booking(self, client, app):
-        # client.post("/showSummary", data=dict(email="test20@test.co"))
         client.post(
             "/purchasePlaces",
             data=dict(
@@ -164,14 +167,19 @@ class TestServer:
         )
         expected_value = [
             {
+                "name": "test_old_competition",
+                "date": "2000-01-01 10:00:00",
+                "numberOfPlaces": 20,
+            },
+            {
                 "name": "test_competition_20_places",
-                "date": "2024-01-01 10:00:00",
+                "date": "2100-01-01 10:00:00",
                 "numberOfPlaces": 10,
                 "participants": {"test_club_20_points": 10},
             },
             {
                 "name": "test_competition_8_places",
-                "date": "2024-01-01 10:00:00",
+                "date": "2100-01-01 10:00:00",
                 "numberOfPlaces": 8,
             },
         ]
@@ -179,7 +187,6 @@ class TestServer:
         assert app.competitions == expected_value
 
     def test_clubs_database_updates_after_booking(self, client, app):
-        # client.post("/showSummary", data=dict(email="test20@test.co"))
         client.post(
             "/purchasePlaces",
             data=dict(
@@ -211,3 +218,7 @@ class TestServer:
     def test_booking_wrong_club_error(self, client):
         response = client.get("/book/test_competition_20_places/wrong-club")
         assert b"Something went wrong-please try again" in response.data
+
+    def test_booking_on_old_competition_not_allowed(self, client):
+        response = client.get("/book/test_old_competition/test_club_20_points")
+        assert b"Booking on a past competition is not allowed" in response.data

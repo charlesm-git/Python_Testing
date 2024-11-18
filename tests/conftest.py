@@ -10,13 +10,18 @@ def temp_competition_db(tmp_path):
     initial_competition_data = {
         "competitions": [
             {
+                "name": "test_old_competition",
+                "date": "2000-01-01 10:00:00",
+                "numberOfPlaces": 20,
+            },
+            {
                 "name": "test_competition_20_places",
-                "date": "2024-01-01 10:00:00",
+                "date": "2100-01-01 10:00:00",
                 "numberOfPlaces": 20,
             },
             {
                 "name": "test_competition_8_places",
-                "date": "2024-01-01 10:00:00",
+                "date": "2100-01-01 10:00:00",
                 "numberOfPlaces": 8,
             },
         ]
