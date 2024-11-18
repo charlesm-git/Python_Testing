@@ -7,6 +7,10 @@ class TestServer:
     def test_index_page_status_code(self, client):
         response = client.get("/")
         assert response.status_code == 200
+        
+    def test_points_page_status_code(self, client):
+        response = client.get("/points")
+        assert response.status_code == 200
 
     def test_login_success_status_code(self, client):
         response = client.post(
