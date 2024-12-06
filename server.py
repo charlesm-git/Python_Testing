@@ -90,9 +90,9 @@ def create_app(config=None):
         )
         # Render the welcome page if the club or the competition in the url is
         # wrong
+        current_time = str(datetime.now())
         if foundClub is None or foundCompetition is None:
             flash("Something went wrong-please try again")
-            current_time = str(datetime.now())
             return render_template(
                 "welcome.html",
                 club=foundClub,
@@ -101,9 +101,8 @@ def create_app(config=None):
             )
         # Render an error message if the user is trying to book place for a 
         # past competition.
-        if foundCompetition["date"] <= str(datetime.now()):
+        if foundCompetition["date"] <= current_time:
             flash("Booking on a past competition is not allowed")
-            current_time = str(datetime.now())
             return render_template(
                 "welcome.html",
                 club=foundClub,
